@@ -1,0 +1,695 @@
+<style>
+    #agenda-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .agenda-element {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: 20px 3px;
+        border-bottom: 2px solid #c8d300;
+        max-width: 1000px;
+    }
+
+    .agenda-element h6 {
+        font-size: 1rem;
+        line-height: 1.4rem;
+    }
+
+    .agenda_wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .agenda-title,
+    .agenda_description {
+        max-width: 800px;
+    }
+
+    .agenda-title {
+        color: #005686;
+        font-weight: bold;
+    }
+
+    .agenda_wrapper img {
+        width: 100%;
+    }
+
+    .agenda_description {
+        height: 50px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    .search_wrapper {
+        margin: 20px 3px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+    }
+
+    #searchInput {
+        border: none;
+        border-bottom: 1px solid #555555;
+        padding: 4px 0px;
+        width: 100%;
+    }
+
+    #searchInput:focus-visible {
+        border: none;
+        border-bottom: 1px solid #c8d300;
+        outline: none;
+    }
+
+    .agenda_date,
+    .search_container,
+    .allFilter_wrapper {
+        display: block;
+        position: relative;
+    }
+
+    .allFilter_wrapper {
+        cursor: pointer;
+        background: transparent;
+        color: #555555;
+        padding: 2px;
+        margin-left: 24px;
+        transition: .3s;
+        border-bottom: 1px solid #555555;
+        width: 100%;
+        max-width: 180px;
+    }
+
+    #dayFilter,
+    #topicFilter {
+        width: 100%;
+        max-width: 200px;
+        text-decoration: none;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        display: none;
+        position: absolute;
+        transition: .3s;
+        top: 24px;
+        left: 0;
+    }
+
+    .agenda_date {
+        font-size: 1rem;
+        margin-top: .5rem;
+        color: #008FBE;
+    }
+
+    .filterDiv {
+        display: none;
+    }
+
+    .show {
+        display: block;
+    }
+
+    .container {
+        margin-top: 20px;
+        overflow: hidden;
+    }
+
+    /* Style the buttons */
+    .dayBtn {
+        border: none;
+        outline: none;
+        padding: 12px 16px;
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .dayBtn:hover {
+        background-color: #ddd;
+    }
+
+    .dayBtn.active {
+        background-color: #666;
+        color: white;
+    }
+
+    .allFilter_wrapper:hover #dayFilter,
+    .allFilter_wrapper:hover #topicFilter {
+        display: block;
+        z-index: 999;
+    }
+
+    .agenda_speaker_card {
+        padding: 10px;
+        width: 100%;
+        display: block;
+        margin: 20px 0;
+        max-width: 800px;
+    }
+
+    .agenda_speaker_card img {
+        border-radius: 50%;
+        width: 80px;
+        object-fit: cover;
+        height: 80px;
+        margin-right: 20px;
+    }
+
+    .open_char {
+        display: block;
+        position: relative;
+        padding: 0px;
+        width: 100%;
+        height: 20px;
+        align-self: flex-end;
+        max-width: 22px;
+        margin-left: 8px;
+    }
+
+    .arrow_agenda {
+        width: 20px !important;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .open_agenda {
+        height: auto;
+    }
+
+    .rotate_char {
+        transform: rotate(-90deg);
+    }
+
+    .agenda_speaker_card img {
+        cursor: pointer;
+    }
+
+
+
+
+    /**************************\
+  Basic Modal Styles
+\**************************/
+
+
+    .modal__overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal__container {
+        background-color: #fff;
+        padding: 30px;
+        max-width: 500px;
+        max-height: 100vh;
+        border-radius: 4px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        min-width: 360px;
+        text-align: center;
+    }
+
+    .modal__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .modal__title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-weight: 600;
+        font-size: 1.25rem;
+        line-height: 1.25;
+        color: #00449e;
+        box-sizing: border-box;
+    }
+
+    .modal__close {
+        background: transparent;
+        border: 0;
+        display: block;
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        cursor: pointer;
+    }
+
+    .modal__header .modal__close:before {
+        content: "\2715";
+    }
+
+    .modal__content {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+        color: rgba(0, 0, 0, .8);
+    }
+
+    .modal__btn {
+        font-size: .875rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+        background-color: #e6e6e6;
+        color: rgba(0, 0, 0, .8);
+        border-radius: .25rem;
+        border-style: none;
+        border-width: 0;
+        cursor: pointer;
+        -webkit-appearance: button;
+        text-transform: none;
+        overflow: visible;
+        line-height: 1.15;
+        margin: 0;
+        will-change: transform;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        transition: -webkit-transform .25s ease-out;
+        transition: transform .25s ease-out;
+        transition: transform .25s ease-out, -webkit-transform .25s ease-out;
+    }
+
+    .modal__btn:focus,
+    .modal__btn:hover {
+        -webkit-transform: scale(1.05);
+        transform: scale(1.05);
+    }
+
+
+
+    /**************************\
+  Demo Animation Style
+\**************************/
+    @keyframes mmfadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes mmfadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+    @keyframes mmslideIn {
+        from {
+            transform: translateY(15%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes mmslideOut {
+        from {
+            transform: translateY(0);
+        }
+
+        to {
+            transform: translateY(-10%);
+        }
+    }
+
+    .micromodal-slide {
+        display: none;
+    }
+
+    .micromodal-slide.is-open {
+        display: block;
+    }
+
+    .micromodal-slide[aria-hidden="false"] .modal__overlay {
+        animation: mmfadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+
+    .micromodal-slide[aria-hidden="false"] .modal__container {
+        animation: mmslideIn .3s cubic-bezier(0, 0, .2, 1);
+    }
+
+    .micromodal-slide[aria-hidden="true"] .modal__overlay {
+        animation: mmfadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    }
+
+    .micromodal-slide[aria-hidden="true"] .modal__container {
+        animation: mmslideOut .3s cubic-bezier(0, 0, .2, 1);
+    }
+
+    .micromodal-slide .modal__container,
+    .micromodal-slide .modal__overlay {
+        will-change: transform;
+    }
+</style>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://unpkg.com/micromodal@0.4.6/dist/micromodal.min.js"></script>
+
+<section class="agenda_wrapper" id="agenda-next-active">
+
+    <div class="title_container"><img class="text_bold_line"
+            src="https://next.medidata.com/wp-content/uploads/2021/06/Short-Thick-Line-Green@2x.png" alt="Green Line">
+        <h1 class="next_h1_title">NEXT Americas</h1>
+    </div>
+
+    <div class="search_wrapper">
+        <div class="search_container">
+            <input type="text" id="searchInput" onkeyup="agendaFilter()" placeholder="KEYWORD SEARCH"
+                title="Type in search">
+        </div>
+
+        <div class="allFilter_wrapper">FILTER BY DAY
+            <ul id="dayFilter">
+
+                <li class="dayBtn active" onclick="filterSelection('all')"> Show all</li>
+                <li class="dayBtn" onclick="filterSelection('day1')"> Day 1</li>
+                <li class="dayBtn" onclick="filterSelection('day2')"> Day 2</li>
+                <li class="dayBtn" onclick="filterSelection('day3')"> Day 3</li>
+            </ul>
+        </div>
+
+        <div class="allFilter_wrapper">FILTER BY TOPIC
+            <ul id="topicFilter">
+
+                <li class="dayBtn" onclick="filterSelection('all')"> Show all</li>
+                <li class="dayBtn" onclick="filterSelection('topic1')"> Topic 1</li>
+                <li class="dayBtn" onclick="filterSelection('topic2')"> Topic 2</li>
+                <li class="dayBtn" onclick="filterSelection('topic3')"> Topic 3</li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div id="agenda-container">
+
+        <div class="agenda-element filterDiv day1 topic1">
+            <h6><span class="circle_glyph">●</span>Keynote DAY 1</h6>
+
+
+            <h3 class="agenda-title">
+                Medidata NEXT: A patient Centric Discussion on the Lasting Impact of COVID-19: Part 1 of 3
+                <span class="agenda_date">October 5, 2020 | 9:00am - 10:00am ET</span>
+            </h3>
+            <p class="agenda_description">
+
+                <span class="open_char"><img class="arrow_agenda"
+                        src="https://next.medidata.com/wp-content/uploads/2021/06/Footer_SmallArrow_Revised.png"
+                        alt="Arrow Next" width="24"></span>
+                Lit essequos assequis moles exceped quibus esto invenis utecae offictore aceperum
+                rehent delit, is eicaborpore libus et occum lam am qui que nam que eatia nis es
+                voluptatem et, omniassenit que a nisquis Lit essequos assequis moles exceped quibus
+                esto invenis utecae offictore aceperum rehent delit, is eicaborpore libus et occum lam
+                am qui que nam que eatia nis es voluptatem et, omniassenit que a nisquis.
+
+            </p>
+
+            <div class="agenda_speaker_card">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1">
+            </div>
+
+        </div>
+
+        <div class="agenda-element filterDiv day2 topic2">
+            <h6><span class="circle_glyph">●</span>Keynote DAY 2</h6>
+
+
+            <h3 class="agenda-title">
+                DAY 2 TITLE
+                <span class="agenda_date">October 5, 2020 | 9:00am - 10:00am ET</span>
+            </h3>
+            <p class="agenda_description">
+                <span class="open_char"><img class="arrow_agenda"
+                        src="https://next.medidata.com/wp-content/uploads/2021/06/Footer_SmallArrow_Revised.png"
+                        alt="Arrow Next" width="24"></span>
+                Lit essequos assequis moles exceped quibus esto invenis utecae offictore aceperum
+                rehent delit, is eicaborpore libus et occum lam am qui que nam que eatia nis es
+                voluptatem et, omniassenit que a nisquis Lit essequos assequis moles exceped quibus
+                esto invenis utecae offictore aceperum rehent delit, is eicaborpore libus et occum lam
+                am qui que nam que eatia nis es voluptatem et, omniassenit que a nisquis.
+
+            </p>
+
+            <div class="agenda_speaker_card">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John">
+            </div>
+
+        </div>
+
+        <div class="agenda-element filterDiv day3 topic3">
+            <h6><span class="circle_glyph">●</span>Keynote DAY 3</h6>
+
+
+            <h3 class="agenda-title">
+                DAY 3 TITLE
+                <span class="agenda_date">October 5, 2020 | 9:00am - 10:00am ET</span>
+            </h3>
+            <p class="agenda_description">
+                Lit essequos assequis moles exceped quibus esto invenis utecae offictore aceperum
+                rehent delit, is eicaborpore libus et occum lam am qui que nam que eatia nis es
+                voluptatem et, omniassenit que a nisquis Lit essequos assequis moles exceped quibus
+                esto invenis utecae offictore aceperum rehent delit, is eicaborpore libus et occum lam
+                am qui que nam que eatia nis es voluptatem et, omniassenit que a nisquis.
+
+            </p>
+
+            <div class="agenda_speaker_card">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John">
+                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John">
+            </div>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <header class="modal__header">
+
+                <img class="modal__img" src="#">
+
+                <h2 class="modal__title" id="modal-1-title">
+                    First Last Name
+                </h2>
+
+                <p>
+                    Title
+                </p>
+
+                <p>
+                    Organization
+                </p>
+
+                <a href="#">LinkedIn</a>
+
+                <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+
+            </header>
+
+            <main class="modal__content" id="modal-1-content">
+                <p>Speaker Sessions:</p>
+
+                <p>Session 1</p>
+
+                <p>
+                    Content
+                </p>
+            </main>
+            <footer class="modal__footer">
+
+                <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
+            </footer>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    MicroModal.init({
+        onShow: modal => console.info(`${modal.id} is shown`), // [1]
+        onClose: modal => console.info(`${modal.id} is hidden`), // [2]
+        openTrigger: 'data-custom-open', // [3]
+        closeTrigger: 'data-micromodal-close', // [4]
+        openClass: 'is-open', // [5]
+        disableScroll: false, // [6]
+        disableFocus: true, // [7]
+        awaitOpenAnimation: true, // [8]
+        awaitCloseAnimation: true, // [9]
+        debugMode: true // [10]
+    });
+</script>
+
+<script>
+    function agendaFilter() {
+        var input, filter, agendaContainer, agendaItem, agendaTitle, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        agendaContainer = document.getElementById("agenda-container");
+        agendaItem = agendaContainer.getElementsByClassName("agenda-element");
+        for (i = 0; i < agendaItem.length; i++) {
+            agendaTitle = agendaItem[i].getElementsByTagName("h3")[0];
+            txtValue = agendaTitle.textContent ||
+                agendaTitle.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                agendaItem[i].style.display = "";
+            } else {
+                agendaItem[i].style.display = "none";
+            }
+        }
+    }
+
+
+
+    var allSpeakers = {
+        "speaker": [{
+                "id": "speaker1",
+                "name": "First Last",
+                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                "title": "Title1",
+                "organization": "Organization1;",
+                "linkedin": "https://www.linkedin.com/in/",
+                "sessions": "session1",
+                "content": "Speaker description"
+            },
+            {
+                "id": "speaker2",
+                "name": "First2 Last2",
+                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                "title": "Title2",
+                "organization": "Organization2;",
+                "linkedin": "https://www.linkedin.com/in/",
+                "sessions": "session2",
+                "content": "Speaker description"
+            },
+            {
+                "id": "speaker3",
+                "name": "First3 Last3",
+                "title": "Title3",
+                "organization": "Organization3;",
+                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                "linkedin": "https://www.linkedin.com/in/",
+                "sessions": "session3",
+                "content": "Speaker description"
+            }
+        ]
+
+    };
+</script>
+
+<script>
+    filterSelection("all")
+
+    function filterSelection(c) {
+        var x, i;
+        x = document.getElementsByClassName("filterDiv");
+        if (c == "all") c = "";
+        for (i = 0; i < x.length; i++) {
+            removeClass(x[i], "show");
+            if (x[i].className.indexOf(c) > -1) addClass(x[i], "show");
+        }
+    }
+
+    function addClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+            if (arr1.indexOf(arr2[i]) == -1) {
+                element.className += " " + arr2[i];
+            }
+        }
+    }
+
+    function removeClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+            while (arr1.indexOf(arr2[i]) > -1) {
+                arr1.splice(arr1.indexOf(arr2[i]), 1);
+            }
+        }
+        element.className = arr1.join(" ");
+    }
+
+
+
+    var elementIds = ["dayFilter", "topicFilter"];
+
+    elementIds.forEach(function (filterId) {
+
+        // document.getElementById(filterid).value = "";
+
+        var dayBtnContainer = document.getElementById(filterId);
+        var dayBtns = dayBtnContainer.getElementsByClassName("dayBtn");
+
+        for (var i = 0; i < dayBtns.length; i++) {
+            dayBtns[i].addEventListener("click", function () {
+                var current = document.getElementsByClassName("active");
+                current[0].className = current[0].className.replace(" active", "");
+                this.className += " active";
+            });
+        }
+    });
+</script>
+
+<script>
+    // when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        // on .arrow_agenda click
+        document.querySelectorAll('.open_char').forEach(trigger => {
+            trigger.addEventListener('click', function () {
+                this.x = ((this.x || 0) + 1) % 2;
+                if (this.x) { // 1st click
+                    this.closest('.agenda_description').classList.add('open_agenda');
+                    this.querySelectorAll('.arrow_agenda').forEach(target => target.classList
+                        .add('rotate_char'));
+
+
+                } else { // 2nd click (toggle)
+
+                    this.closest('.agenda_description').classList.remove('open_agenda');
+                    this.querySelectorAll('.arrow_agenda').forEach(target => target.classList
+                        .remove('rotate_char'));
+                }
+            });
+        });
+    });
+</script>
