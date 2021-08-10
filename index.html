@@ -432,12 +432,15 @@
             </p>
 
             <div class="agenda_speaker_card">
-                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
-                    data-custom-open="modal-1">
-                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
-                    data-custom-open="modal-1">
-                <img src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
-                    data-custom-open="modal-1">
+                <img class="speaker_img"
+                    src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1" id="0">
+                <img class="speaker_img"
+                    src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1" id="1">
+                <img class="speaker_img"
+                    src="https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png" alt="John"
+                    data-custom-open="modal-1" id="2">
             </div>
 
         </div>
@@ -554,6 +557,68 @@
         awaitCloseAnimation: true, // [9]
         debugMode: true // [10]
     });
+
+
+    //immediate invoked function expression
+    (function () {
+
+        const allSpeakers = [{
+                key: 0,
+                id: "speaker1",
+                name: "First Last",
+                img: "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                title: "Title1",
+                organization: "Organization1",
+                linkedin: "https://www.linkedin.com/in/",
+                sessions: "session1",
+                content: "Speaker description"
+            },
+            {
+                key: 1,
+                id: "speaker2",
+                name: "First2 Last2",
+                img: "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                title: "Title2",
+                organization: "Organization2",
+                linkedin: "https://www.linkedin.com/in/",
+                sessions: "session2",
+                content: "Speaker description"
+            },
+            {
+                key: 2,
+                id: "speaker3",
+                name: "First3 Last3",
+                title: "Title3",
+                organization: "Organization3",
+                img: "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
+                linkedin: "https://www.linkedin.com/in/",
+                sessions: "session3",
+                content: "Speaker description"
+            }
+        ]
+
+
+        const buttons = document.querySelectorAll('.speaker_img');
+        buttons.forEach(button => button.addEventListener('click', openModal))
+
+        function openModal(event) {
+            let modalContent = document.getElementById('modal-1-content');
+            const data = allSpeakers.filter(speaker => speaker.key === Number(event.target.id));
+            modalContent.innerHTML = JSON.stringify(data[0]);
+        }
+
+
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     document.querySelectorAll('.speaker_img').forEach(trigger => {
+        //         trigger.addEventListener('click', function () {
+        //             document.getElementById('modal-1-title').textContent = allSpeakers.name;
+
+
+        //         });
+        //     });
+
+        // })
+    })();
 </script>
 
 <script>
@@ -574,43 +639,6 @@
             }
         }
     }
-
-
-
-    var allSpeakers = {
-        "speaker": [{
-                "id": "speaker1",
-                "name": "First Last",
-                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
-                "title": "Title1",
-                "organization": "Organization1;",
-                "linkedin": "https://www.linkedin.com/in/",
-                "sessions": "session1",
-                "content": "Speaker description"
-            },
-            {
-                "id": "speaker2",
-                "name": "First2 Last2",
-                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
-                "title": "Title2",
-                "organization": "Organization2;",
-                "linkedin": "https://www.linkedin.com/in/",
-                "sessions": "session2",
-                "content": "Speaker description"
-            },
-            {
-                "id": "speaker3",
-                "name": "First3 Last3",
-                "title": "Title3",
-                "organization": "Organization3;",
-                "img": "https://next.medidata.com/wp-content/uploads/2021/08/SastryC-FAVORITE-.png",
-                "linkedin": "https://www.linkedin.com/in/",
-                "sessions": "session3",
-                "content": "Speaker description"
-            }
-        ]
-
-    };
 </script>
 
 <script>
